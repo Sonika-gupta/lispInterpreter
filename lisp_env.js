@@ -10,7 +10,7 @@ module.exports = {
 		'cons': (num, list) => [num].concat(list),
 		
 		'+': (...args) => args.reduce((sum, el) => sum+=el),
-		'-': (...args) => args.reduce((sum, el) => sum-=el, 0),
+		'-': (...args) => args.reduce((sum, el) => sum-=el),
 		'*': (...args) => args.reduce((sum, el) => sum*=el),
 		'/': (...args) => args.reduce((sum, el) => sum/=el),
 		'sqrt': num => Math.sqrt(num),
