@@ -1,0 +1,5 @@
+(define mult (lambda (x y z)  (* x y z)))
+(define x 100)
+(define y 500)
+(define z 200)
+(mult x y z)
