@@ -1,13 +1,14 @@
 module.exports = {
-	'print': (data) => console.log(data),
+	'print': (data) => console.log(Array.isArray(data) ? data = `(${data.join(' ')})` : data),
 	operations: {
 		'begin': (...args) => args[args.length-1],
-		'list': (...list) => [...list], 
+		'list': (...list) => [...list],
 		'append': (list, ...args) => list.push(...args),
 		'length': list => list.length,
 		'car': list => list.length ? list[0] : null,
 		'cdr': list => list.length-1 ? list.slice(1) : null,
-		'cons': (num, list) => [num].concat(list),
+		'cons': (num, list) => (typeof list == 'string') ? `${num}`.concat(' ', list) : [num].concat(list),
+		'quote': (input) => input && input.length ? `${input}` : [],
 		
 		'+': (...args) => args.reduce((sum, el) => sum+=el),
 		'-': (...args) => args.reduce((sum, el) => sum-=el),
@@ -15,6 +16,7 @@ module.exports = {
 		'/': (...args) => args.reduce((sum, el) => sum/=el),
 		'sqrt': num => Math.sqrt(num),
 		'expt': (base, exponent) => Math.pow(base, exponent),
+		'pow': (base, exponent) => Math.pow(base, exponent),
 		'min': (...args) => Math.min(...args),
 		'max': (...args) => Math.max(...args),
 		'abs': num => Math.abs(num),
@@ -36,7 +38,7 @@ module.exports = {
 		'<':(a, b) => a < b,
 		'>=':(a, b) => a >= b,
 		'<=':(a, b) => a <= b,
-		'=':(a, b) => a == b,
+		'=':(a, b) => a === b,
 	},
 	
 	'null?': value => value === null,
