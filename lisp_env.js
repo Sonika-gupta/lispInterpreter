@@ -7,8 +7,9 @@ module.exports = {
 		'length': list => list.length,
 		'car': list => list.length ? list[0] : null,
 		'cdr': list => list.length-1 ? list.slice(1) : null,
+		'map': (func, list) => list.map(el => func(el)),
 		'cons': (num, list) => (typeof list == 'string') ? `${num}`.concat(' ', list) : [num].concat(list),
-		'quote': (input) => input && input.length ? `${input}` : [],
+		'quote': (input) => input && input.length ? `${input}` : '',
 		
 		'+': (...args) => args.reduce((sum, el) => sum+=el),
 		'-': (...args) => args.reduce((sum, el) => sum-=el),

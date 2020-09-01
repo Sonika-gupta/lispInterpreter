@@ -8,7 +8,6 @@ specialForms.if = (scope, args) => {
 		return (value = interpret(scope, args[1])) ? value[0] : evaluate(scope, args[1]);
 	else return (value = interpret(scope, args[2])) ? value[0] : evaluate(scope, args[2]);
 };
-
 specialForms.while = (scope, args) => {
 	if (args.length != 2) {
 		throw new SyntaxError("Invalid args to while");
@@ -18,7 +17,6 @@ specialForms.while = (scope, args) => {
 	}
 	return null;
 };
-
 specialForms.do = (scope, args) => {
 	let value;
 	for (let arg of args) {
@@ -26,14 +24,15 @@ specialForms.do = (scope, args) => {
 	}
 	return value;
 };
-
 specialForms.define = (scope, [key, value]) => {
-	if (value == undefined || Number(key)) {
-		throw new SyntaxError("Incorrect use of define");
-	}
+	if (value == undefined || Number(key)) throw new SyntaxError("Incorrect use of define");
 	scope[key] = value;
 };
-
+specialForms.set = (scope, [key, value]) => {
+	if (value == undefined || Number(key)) throw new SyntaxError("Incorrect use of set");
+	if(!(key in scope)) throw new ReferenceError(`Undefined variable ${key}`);
+	scope[key] = value;
+};
 specialForms.lambda = (scope, [params, body]) => {
 	if (!params || !body) {
 		throw new SyntaxError("Function Body Required");
@@ -81,6 +80,8 @@ function evaluate(scope, action, args) {
 		
 	if(action in global.operations)
 		return global.operations[action](...args.map(el => evaluate(scope, el)));
+
+	if(!isNaN(parseFloat(action))) return [Number(action), ...args.map(el => evaluate(el))];
 
 	throw new SyntaxError(`Unknown Keyword ${action}`);	
 }
@@ -142,7 +143,10 @@ function extractConditional(input) {
 
 function extractSpecialForm(scope, action, input) {
 	switch(action) {
+		case 'map':
+		case 'set':
 		case 'define': return extractDefine(scope, input);
+		// case 'let': return extractLet(scope, input);
 		case 'lambda': return extractLambda(input);
 		case 'count': return extractCount(input);
 		default: return extractConditional(input);
@@ -166,6 +170,7 @@ function interpret(scope, input) {
 		while(input && input[0]!=')') {
 			let value;
 			[value, input] = interpret(scope, input) || getWord(input);
+			// [value, input] = getExpr(input) || getWord(input);
 			if(value == null) throw Error(`What? ${input}`);
 			args.push(evaluate(scope, value));
 		}
@@ -184,28 +189,19 @@ function run(scope, data) {
 }
 
 const fs = require('fs');
-/* const data = fs.readFileSync(`./lispInterpreter/lisptest/test7.lisp`);
-run(global, data.toString()); */
+//Run Test files in a Directory:
 fs.readdir('./lispInterpreter/lisptest', (err, files) => {
 	if (err)
 			console.log(err);
 	else {
 		files.forEach(file => {
-			console.log(file);
+			console.log(`\n${file}`);
 			const data = fs.readFileSync(`./lispInterpreter/lisptest/${file}`);
 			run(global, data.toString());
 		})
 	}
 });
 
-/* const readline = require('readline');
-
-const rd = readline.createInterface({
-	input: fs.createReadStream('./lispInterpreter/test3.lisp'),
-	output: process.stdout,
-	console: false
-});
-
-rd.on('line', function(line) {
-	console.log(line);
-}); */
+//Run Single file:
+/* const data = fs.readFileSync(`./lispInterpreter/lisptest/test7.lisp`);
+run(global, data.toString()); */
