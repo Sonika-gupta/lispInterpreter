@@ -68,7 +68,7 @@ function evaluate (scope, action, args) {
   if (!args || !args.length) {
     return (action === null) ? []
       : !isNaN(Number(action)) && !isNaN(parseFloat(action)) ? Number(action)
-        : action in scope ? scope[action] : action
+          : action in scope ? scope[action] : action
   }
 
   if (typeof action === 'function') return action(...args)
