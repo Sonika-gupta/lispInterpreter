@@ -66,9 +66,10 @@ specialForms.count = (scope, [value, list]) => {
 function evaluate (scope, action, args) {
   // console.log('action:', action, 'args:', args);
   if (!args || !args.length) {
-    return (action === null) ? []
-      : !isNaN(Number(action)) && !isNaN(parseFloat(action)) ? Number(action)
-          : action in scope ? scope[action] : action
+    if (action === null) return []
+    if (!isNaN(Number(action)) && !isNaN(parseFloat(action))) return Number(action)
+    if (action in scope) return scope[action]
+    return action
   }
 
   if (typeof action === 'function') return action(...args)
